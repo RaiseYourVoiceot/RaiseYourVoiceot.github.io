@@ -110,6 +110,41 @@
     onscroll(document, toggleBacktotop)
   }
 
+  on('click', '.nav-toggle', function(e) {
+    select('#navbar').classList.toggle('navbar')
+    this.classList.toggle('bi-list')
+    this.classList.toggle('bi-x')
+  })
+
+  /**
+   * Mobile nav dropdowns activate
+   */
+  on('click', '.navbar .dropdown > a', function(e) {
+    if (select('#navbar').classList.contains('navbar')) {
+      e.preventDefault()
+      this.nextElementSibling.classList.toggle('dropdown-active')
+    }
+  }, true)
+
+  /**
+   * Scrool with ofset on links with a class name .scrollto
+   */
+  on('click', '.scrollto', function(e) {
+    if (select(this.hash)) {
+      e.preventDefault()
+
+      let navbar = select('#navbar')
+      if (navbar.classList.contains('navbar')) {
+        navbar.classList.remove('navbar')
+        let navbarToggle = select('.nav-toggle')
+        navbarToggle.classList.toggle('bi-list')
+        navbarToggle.classList.toggle('bi-x')
+      }
+      scrollto(this.hash)
+    }
+  }, true)
+
+
   /**
    * Mobile nav toggle
    */
@@ -277,3 +312,76 @@
   });
 
 })()
+
+
+   /**
+   * campaign isotope and filter
+   */
+    window.addEventListener('load', () => {
+      let campaignContainer = select('.campaign-container');
+      if (campaignContainer) {
+        let campaignIsotope = new Isotope(campaignContainer, {
+          itemSelector: '.campaign-item',
+          layoutMode: 'fitRows'
+        });
+  
+        let campaignFlters = select('#campaign-flters li', true);
+  
+        on('click', '#campaign-flters li', function(e) {
+          e.preventDefault();
+          campaignFlters.forEach(function(el) {
+            el.classList.remove('filter-active');
+          });
+          this.classList.add('filter-active');
+  
+          campaignIsotope.arrange({
+            filter: this.getAttribute('data-filter')
+          });
+          campaignIsotope.on('arrangeComplete', function() {
+            AOS.refresh()
+          });
+        }, true);
+      }
+  
+    });
+  
+    /**
+     * Initiate campaign lightbox 
+     */
+    const campaignLightbox = GLightbox({
+      selector: '.campaign-lightbox'
+    });
+  
+    /**
+     * campaign details slider
+     */
+    new Swiper('.campaign-details-slider', {
+      speed: 400,
+      loop: true,
+      autoplay: {
+        delay: 5000,
+        disableOnInteraction: false
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'bullets',
+        clickable: true
+      }
+    });
+  
+    /**
+     * Animation on scroll
+     */
+    window.addEventListener('load', () => {
+      AOS.init({
+        duration: 1000,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+      })
+    });
+  
+
+  
+  
+  
